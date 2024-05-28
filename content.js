@@ -21,7 +21,7 @@ function createTimerElement() {
   
   window.addEventListener('load', function() {
     if (window.location.hostname === 'www.google.com' && window.location.pathname === '/') {
-      alert('ここはGoogleのホームです');
+      alert('ここはGoogleのホームですか？');
       const searchBox = document.querySelector('input[name="q"], textarea[name="q"]');
       if (searchBox) {
         searchBox.addEventListener('focus', function() {
