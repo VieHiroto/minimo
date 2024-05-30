@@ -1,0 +1,95 @@
+(function() {
+    'use strict';
+
+    // 指定されたスタッフのリスト
+    var targetStaff = [
+        'MODEks eau 佐藤優志',
+        '塩谷 愛梨',
+        'マキノ ユウタ',
+        "MODE K\'s eau松下仁美",
+    ];
+
+    // スタッフの公開/非公開を切り替える関数
+    function toggleStaffVisibility() {
+        // 全ての選択要素を取得
+        var selectElements = document.querySelectorAll('.m_staff_card_action .a_select');
+
+        if (selectElements.length > 0) {
+            selectElements.forEach(function(selectElement) {
+                var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
+                if (cardTitle && targetStaff.includes(cardTitle.textContent.trim())) {
+                    // 公開状態を非公開に変更
+                    selectElement.value = '1'; // 1は「非公開」
+                    var event = new Event('change', { bubbles: true });
+                    selectElement.dispatchEvent(event);
+                }
+            });
+
+            // 5秒待機してから非公開を公開に変更
+            setTimeout(function() {
+                selectElements.forEach(function(selectElement) {
+                    var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
+                    if (cardTitle && targetStaff.includes(cardTitle.textContent.trim())) {
+                        selectElement.value = '0'; // 0は「公開」
+                        var event = new Event('change', { bubbles: true });
+                        selectElement.dispatchEvent(event);
+                    }
+                });
+            }, 5000);
+        }
+    }
+
+    // カウントダウンタイマーの更新
+    function updateCountdown() {
+        var now = new Date();
+        var nextExecution = new Date(now.getTime() + (30 * 60 * 1000) - (now.getTime() % (30 * 60 * 1000)));
+        var timeLeft = nextExecution - now;
+
+        var minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+        countdownElement.textContent = `次の実行まで: ${minutes}分 ${seconds}秒`;
+    }
+
+    // 初回実行
+    toggleStaffVisibility();
+
+    // 30分ごとに実行
+    setInterval(toggleStaffVisibility, 30 * 60 * 1000);
+
+    // カウントダウンタイマーの更新を毎秒行う
+    setInterval(updateCountdown, 1000);
+
+    // 手動実行ボタンとカウントダウン表示の作成
+    var button = document.createElement('button');
+    button.textContent = '手動実行';
+    button.style.position = 'fixed';
+    button.style.bottom = '10px';
+    button.style.right = '10px';
+    button.style.zIndex = 1000;
+    button.style.padding = '10px';
+    button.style.backgroundColor = '#4CAF50';
+    button.style.color = 'white';
+    button.style.border = 'none';
+    button.style.borderRadius = '5px';
+    button.style.cursor = 'pointer';
+
+    var countdownElement = document.createElement('div');
+    countdownElement.style.position = 'fixed';
+    countdownElement.style.bottom = '50px';
+    countdownElement.style.right = '10px';
+    countdownElement.style.zIndex = 1000;
+    countdownElement.style.padding = '10px';
+    countdownElement.style.backgroundColor = '#333';
+    countdownElement.style.color = 'white';
+    countdownElement.style.border = 'none';
+    countdownElement.style.borderRadius = '5px';
+
+    button.addEventListener('click', toggleStaffVisibility);
+
+    document.body.appendChild(button);
+    document.body.appendChild(countdownElement);
+
+    // 初回カウントダウンの表示
+    updateCountdown();
+})();
