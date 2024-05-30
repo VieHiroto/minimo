@@ -37,13 +37,19 @@
                 });
             }, 5000);
         }
+
+        // 次の実行時間を設定
+        nextExecution = new Date().getTime() + (30 * 60 * 1000);
     }
 
     // カウントダウンタイマーの更新
     function updateCountdown() {
-        var now = new Date();
-        var nextExecution = new Date(now.getTime() + (30 * 60 * 1000) - (now.getTime() % (30 * 60 * 1000)));
+        var now = new Date().getTime();
         var timeLeft = nextExecution - now;
+
+        if (timeLeft <= 0) {
+            toggleStaffVisibility();
+        }
 
         var minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
         var seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
@@ -52,10 +58,8 @@
     }
 
     // 初回実行
+    var nextExecution = new Date().getTime();
     toggleStaffVisibility();
-
-    // 30分ごとに実行
-    setInterval(toggleStaffVisibility, 30 * 60 * 1000);
 
     // カウントダウンタイマーの更新を毎秒行う
     setInterval(updateCountdown, 1000);
