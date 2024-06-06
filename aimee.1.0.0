@@ -3,7 +3,7 @@
 
     // 指定されたスタッフのリスト
     var targetStaff = [
-        "小山 洋次",
+        '小山 洋次',
          'Aimée by  modeks',
     ];
 
