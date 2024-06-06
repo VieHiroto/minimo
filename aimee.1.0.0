@@ -4,7 +4,7 @@
     // 指定されたスタッフのリスト
     var targetStaff = [
         "小山 洋次",
-        "Aimée by modeks",
+         'Aimée by  modeks',
     ];
 
     // スタッフの公開/非公開を切り替える関数
