@@ -28,7 +28,7 @@
                 }
             });
 
-            // 5秒待機してから非公開を公開に変更
+            // 10秒待機してから非公開を公開に変更
             setTimeout(function() {
                 selectElements.forEach(function(selectElement) {
                     var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
@@ -38,7 +38,7 @@
                         selectElement.dispatchEvent(event);
                     }
                 });
-            }, 5000);
+            }, 10000);
         }
 
         // 次の実行時間を設定
