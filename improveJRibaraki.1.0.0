@@ -96,10 +96,29 @@
     countdownElement.style.border = 'none';
     countdownElement.style.borderRadius = '5px';
 
-    button.addEventListener('click', toggleStaffVisibility);
+    var manualExecutionMessage = document.createElement('div');
+    manualExecutionMessage.style.position = 'fixed';
+    manualExecutionMessage.style.bottom = '100px';
+    manualExecutionMessage.style.right = '10px';
+    manualExecutionMessage.style.zIndex = 1000;
+    manualExecutionMessage.style.padding = '10px';
+    manualExecutionMessage.style.backgroundColor = '#FF0000';
+    manualExecutionMessage.style.color = 'white';
+    manualExecutionMessage.style.border = 'none';
+    manualExecutionMessage.style.borderRadius = '5px';
+    manualExecutionMessage.style.display = 'none';
+    manualExecutionMessage.textContent = '手動実行を一時停止しています';
+
+    button.addEventListener('click', function() {
+        manualExecutionMessage.style.display = 'block';
+        setTimeout(function() {
+            manualExecutionMessage.style.display = 'none';
+        }, 3000); // 3秒後にメッセージを非表示にする
+    });
 
     document.body.appendChild(button);
     document.body.appendChild(countdownElement);
+    document.body.appendChild(manualExecutionMessage);
 
     // 初回カウントダウンの表示
     updateCountdown();
