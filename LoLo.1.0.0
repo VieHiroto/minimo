@@ -38,6 +38,12 @@
                         selectElement.dispatchEvent(event);
                     }
                 });
+
+                // 5秒後にページをリロード
+                setTimeout(function() {
+                    location.reload();
+                }, 5000);
+
             }, 10000);
         }
 
