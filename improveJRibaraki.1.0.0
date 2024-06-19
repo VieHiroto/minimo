@@ -71,6 +71,19 @@
     // カウントダウンタイマーの更新を毎秒行う
     setInterval(updateCountdown, 1000);
 
+    // 手動実行ボタンとカウントダウン表示の作成
+    var button = document.createElement('button');
+    button.textContent = '手動実行';
+    button.style.position = 'fixed';
+    button.style.bottom = '10px';
+    button.style.right = '10px';
+    button.style.zIndex = 1000;
+    button.style.padding = '10px';
+    button.style.backgroundColor = '#4CAF50';
+    button.style.color = 'white';
+    button.style.border = 'none';
+    button.style.borderRadius = '5px';
+    button.style.cursor = 'pointer';
 
     var countdownElement = document.createElement('div');
     countdownElement.style.position = 'fixed';
