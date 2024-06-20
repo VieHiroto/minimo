@@ -39,15 +39,11 @@
                     }
                 });
 
-                // 5秒後にページをリロード
-                setTimeout(function() {
-                    location.reload();
-                }, 5000);
 
             }, 5000);
         }
 
-        // 次の実行時間を設定 (ランダムな30〜50分の間隔)
+        // 次の実行時間を設定 (ランダムな30〜90分の間隔)
         nextExecution = new Date().getTime() + (30 + Math.random() * 60) * 60 * 1000;
     }
 
