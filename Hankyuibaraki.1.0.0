@@ -47,8 +47,8 @@
             }, 5000);
         }
 
-        // 次の実行時間を設定 (ランダムな30〜50分の間隔)
-        nextExecution = new Date().getTime() + (30 + Math.random() * 20) * 60 * 1000;
+        // 次の実行時間を設定 (ランダムな31〜90分の間隔)
+        nextExecution = new Date().getTime() + (30 + Math.random() * 60) * 60 * 1000;
     }
 
     // カウントダウンタイマーの更新
@@ -60,7 +60,7 @@
             toggleStaffVisibility();
         }
 
-        var minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        var minutes = Math.floor((timeLeft % (1000 * 90 * 60)) / (1000 * 60));
         var seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
         countdownElement.textContent = `次の実行まで: ${minutes}分 ${seconds}秒`;
