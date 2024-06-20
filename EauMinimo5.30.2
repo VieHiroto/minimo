@@ -6,7 +6,7 @@
         'MODEks eau 佐藤優志',
         '塩谷 愛梨',
         'マキノ ユウタ',
-        "MODE K\'s eau松下仁美",
+        "MODE K's eau松下仁美",
     ];
 
     // スタッフの公開/非公開を切り替える関数
@@ -44,8 +44,8 @@
             }, 5000);
         }
 
-        // 次の実行時間を設定
-        nextExecution = new Date().getTime() + (30 * 60 * 1000);
+        // 次の実行時間を設定 (ランダムな30〜50分の間隔)
+        nextExecution = new Date().getTime() + (30 + Math.random() * 20) * 60 * 1000;
     }
 
     // カウントダウンタイマーの更新
