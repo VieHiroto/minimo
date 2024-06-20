@@ -19,35 +19,49 @@
         var selectElements = document.querySelectorAll('.m_staff_card_action .a_select');
 
         if (selectElements.length > 0) {
-            selectElements.forEach(function(selectElement) {
-                var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
-                if (cardTitle && targetStaff.includes(cardTitle.textContent.trim())) {
-                    // 公開状態を非公開に変更
-                    selectElement.value = '1'; // 1は「非公開」
-                    var event = new Event('change', { bubbles: true });
-                    selectElement.dispatchEvent(event);
-                }
-            });
+            let index = 0;
 
-            // 5秒待機してから非公開を公開に変更
-            setTimeout(function() {
-                selectElements.forEach(function(selectElement) {
+            function processNext() {
+                if (index < selectElements.length) {
+                    var selectElement = selectElements[index];
+                    var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
+                    if (cardTitle && targetStaff.includes(cardTitle.textContent.trim())) {
+                        // 公開状態を非公開に変更
+                        selectElement.value = '1'; // 1は「非公開」
+                        var event = new Event('change', { bubbles: true });
+                        selectElement.dispatchEvent(event);
+                    }
+                    index++;
+                    setTimeout(processNext, 1000); // 1秒待機
+                } else {
+                    setTimeout(() => {
+                        index = 0;
+                        processNextToggle();
+                    }, 5000); // 全ての非公開処理後に5秒待機
+                }
+            }
+
+            function processNextToggle() {
+                if (index < selectElements.length) {
+                    var selectElement = selectElements[index];
                     var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
                     if (cardTitle && targetStaff.includes(cardTitle.textContent.trim())) {
                         selectElement.value = '0'; // 0は「公開」
                         var event = new Event('change', { bubbles: true });
                         selectElement.dispatchEvent(event);
                     }
-                });
+                    index++;
+                    setTimeout(processNextToggle, 1000); // 1秒待機
+                }
+            }
 
-
-            }, 5000);
+            processNext();
         }
 
-        // 次の実行時間を設定 (ランダムな30〜50分の間隔)
+        // 次の実行時間を設定 (ランダムな30〜75分の間隔)
         nextExecution = new Date().getTime() + (30 + Math.random() * 45) * 60 * 1000;
     }
-    
+
     // カウントダウンタイマーの更新
     function updateCountdown() {
         var now = new Date().getTime();
