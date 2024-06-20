@@ -11,6 +11,7 @@
         "はるか💛阪急茨木/ マツエク/マツパ",
     ];
 
+
     // スタッフの公開/非公開を切り替える関数
     function toggleStaffVisibility() {
         // 全ての選択要素を取得
@@ -72,23 +73,10 @@
     // カウントダウンタイマーの更新を毎秒行う
     setInterval(updateCountdown, 1000);
 
-    // 手動実行ボタンとカウントダウン表示の作成
-    var button = document.createElement('button');
-    button.textContent = '手動実行';
-    button.style.position = 'fixed';
-    button.style.bottom = '10px';
-    button.style.right = '10px';
-    button.style.zIndex = 1000;
-    button.style.padding = '10px';
-    button.style.backgroundColor = '#4CAF50';
-    button.style.color = 'white';
-    button.style.border = 'none';
-    button.style.borderRadius = '5px';
-    button.style.cursor = 'pointer';
-
+    // カウントダウン表示の作成
     var countdownElement = document.createElement('div');
     countdownElement.style.position = 'fixed';
-    countdownElement.style.bottom = '50px';
+    countdownElement.style.bottom = '10px';
     countdownElement.style.right = '10px';
     countdownElement.style.zIndex = 1000;
     countdownElement.style.padding = '10px';
@@ -97,9 +85,6 @@
     countdownElement.style.border = 'none';
     countdownElement.style.borderRadius = '5px';
 
-    button.addEventListener('click', toggleStaffVisibility);
-
-    document.body.appendChild(button);
     document.body.appendChild(countdownElement);
 
     // 初回カウントダウンの表示
