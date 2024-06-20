@@ -1,92 +1,88 @@
-(function() {
-    'use strict';
-
-    // 指定されたスタッフのリスト
-    var targetStaff = [
-        '✂️メンズパーマ✂️ タマガキ　コウジ',
+// 指定されたスタッフのリスト
+var targetStaff = [
+    '✂️メンズパーマ✂️ タマガキ　コウジ',
         '百田 侑奈',
         'リョウスケ/髪質改善 /ブルーブラック',
         '✨️美髪✨️髪質改善 /  針田 綾音',
         'アイリスト🦋中川 未来🦋',
         "MODE  K's MARI",
         '縮毛矯正特化サロン モードケイズ',
-    ];
+];
 
-    // スタッフの公開/非公開を切り替える関数
-    function toggleStaffVisibility() {
-        // 全ての選択要素を取得
-        var selectElements = document.querySelectorAll('.m_staff_card_action .a_select');
+// スタッフの公開/非公開を切り替える関数
+function toggleStaffVisibility() {
+    // 全ての選択要素を取得
+    var selectElements = document.querySelectorAll('.m_staff_card_action .a_select');
 
-        if (selectElements.length > 0) {
+    if (selectElements.length > 0) {
+        selectElements.forEach(function(selectElement) {
+            var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
+            if (cardTitle && targetStaff.includes(cardTitle.textContent.trim())) {
+                // 公開状態を非公開に変更
+                selectElement.value = '1'; // 1は「非公開」
+                var event = new Event('change', { bubbles: true });
+                selectElement.dispatchEvent(event);
+            }
+        });
+
+        // 5秒待機してから非公開を公開に変更
+        setTimeout(function() {
             selectElements.forEach(function(selectElement) {
                 var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
                 if (cardTitle && targetStaff.includes(cardTitle.textContent.trim())) {
-                    // 公開状態を非公開に変更
-                    selectElement.value = '1'; // 1は「非公開」
+                    selectElement.value = '0'; // 0は「公開」
                     var event = new Event('change', { bubbles: true });
                     selectElement.dispatchEvent(event);
                 }
             });
 
-            // 5秒待機してから非公開を公開に変更
+            // 5秒後にページをリロード
             setTimeout(function() {
-                selectElements.forEach(function(selectElement) {
-                    var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
-                    if (cardTitle && targetStaff.includes(cardTitle.textContent.trim())) {
-                        selectElement.value = '0'; // 0は「公開」
-                        var event = new Event('change', { bubbles: true });
-                        selectElement.dispatchEvent(event);
-                    }
-                });
-
-                // 5秒後にページをリロード
-                setTimeout(function() {
-                    location.reload();
-                }, 5000);
-
+                location.reload();
             }, 5000);
-        }
 
-        // 次の実行時間を設定 (ランダムな45〜90分の間隔)
-        nextExecution = new Date().getTime() + (９０ + Math.random() * 45) * 60 * 1000;
+        }, 5000);
     }
 
-    // カウントダウンタイマーの更新
-    function updateCountdown() {
-        var now = new Date().getTime();
-        var timeLeft = nextExecution - now;
+    // 次の実行時間を設定 (ランダムな30〜50分の間隔)
+    nextExecution = new Date().getTime() + (30 + Math.random() * 20) * 60 * 1000;
+}
 
-        if (timeLeft <= 0) {
-            toggleStaffVisibility();
-        }
+// カウントダウンタイマーの更新
+function updateCountdown() {
+    var now = new Date().getTime();
+    var timeLeft = nextExecution - now;
 
-        var minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-        var seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-
-        countdownElement.textContent = `次の実行まで: ${minutes}分 ${seconds}秒`;
+    if (timeLeft <= 0) {
+        toggleStaffVisibility();
     }
 
-    // 初回実行
-    var nextExecution = new Date().getTime();
-    toggleStaffVisibility();
+    var minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+    var seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-    // カウントダウンタイマーの更新を毎秒行う
-    setInterval(updateCountdown, 1000);
+    countdownElement.textContent = `次の実行まで: ${minutes}分 ${seconds}秒`;
+}
 
-    // カウントダウン表示の作成
-    var countdownElement = document.createElement('div');
-    countdownElement.style.position = 'fixed';
-    countdownElement.style.bottom = '10px';
-    countdownElement.style.right = '10px';
-    countdownElement.style.zIndex = 1000;
-    countdownElement.style.padding = '10px';
-    countdownElement.style.backgroundColor = '#333';
-    countdownElement.style.color = 'white';
-    countdownElement.style.border = 'none';
-    countdownElement.style.borderRadius = '5px';
+// 初回実行
+var nextExecution = new Date().getTime();
+toggleStaffVisibility();
 
-    document.body.appendChild(countdownElement);
+// カウントダウンタイマーの更新を毎秒行う
+setInterval(updateCountdown, 1000);
 
-    // 初回カウントダウンの表示
-    updateCountdown();
-})();
+// カウントダウン表示の作成
+var countdownElement = document.createElement('div');
+countdownElement.style.position = 'fixed';
+countdownElement.style.bottom = '10px';
+countdownElement.style.right = '10px';
+countdownElement.style.zIndex = 1000;
+countdownElement.style.padding = '10px';
+countdownElement.style.backgroundColor = '#333';
+countdownElement.style.color = 'white';
+countdownElement.style.border = 'none';
+countdownElement.style.borderRadius = '5px';
+
+document.body.appendChild(countdownElement);
+
+// 初回カウントダウンの表示
+updateCountdown();
