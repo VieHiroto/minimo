@@ -28,7 +28,7 @@ function toggleStaffVisibility() {
             }
         });
 
-        // 5秒待機してから非公開を公開に変更
+        // 10秒待機してから非公開を公開に変更
         setTimeout(function() {
             selectElements.forEach(function(selectElement) {
                 var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
@@ -39,12 +39,12 @@ function toggleStaffVisibility() {
                 }
             });
 
-            // 5秒後にページをリロード
+            // １０秒後にページをリロード
             setTimeout(function() {
                 location.reload();
-            }, 5000);
+            }, 10000);
 
-        }, 5000);
+        }, 10000);
     }
 
     // 次の実行時間を設定 (ランダムな30〜60分の間隔)
