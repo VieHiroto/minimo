@@ -55,7 +55,15 @@
                 }
             }
 
+
+
             processNext();
+
+                // 60秒後にページをリロード
+                setTimeout(function() {
+                    location.reload();
+                }, 60000);
+
         }
 
         // 次の実行時間を設定 (ランダムな30〜75分の間隔)
