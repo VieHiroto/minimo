@@ -82,7 +82,5 @@
     // カウントダウンタイマーの更新を毎秒行う
     setInterval(updateCountdown, 1000);
 
-    // 初回実行
-    toggleStaffVisibility();
 })();
 
