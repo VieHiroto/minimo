@@ -55,7 +55,7 @@
 
         if (timeLeft <= 0) {
             toggleStaffVisibility();
-            nextExecution = new Date().getTime() + (30 + Math.random() * 20) * 60 * 1000;
+            nextExecution = new Date().getTime() + (30) * 60 * 1000;
         }
 
         var minutes = Math.floor((timeLeft % (1000 * 90 * 60)) / (1000 * 60));
