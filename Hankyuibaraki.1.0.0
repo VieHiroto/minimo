@@ -10,7 +10,6 @@
         "似合わせマツエク 吉田茉央",
         "はるか💛阪急茨木/ マツエク/マツパ",
     ];
-
     // スタッフの公開/非公開を切り替える関数
     function toggleStaffVisibility() {
         // 全ての選択要素を取得
@@ -45,7 +44,11 @@
     }
 
     // 次の実行時間を設定 (ランダムな30〜50分の間隔)
-    var nextExecution = new Date().getTime() + (30 + Math.random() * 20) * 60 * 1000;
+    function setNextExecutionTime() {
+        return new Date().getTime() + (30 + Math.random() * 20) * 60 * 1000;
+    }
+
+    var nextExecution = setNextExecutionTime();
 
     // カウントダウンタイマーの更新
     function updateCountdown() {
@@ -58,7 +61,7 @@
             return;
         }
 
-        var minutes = Math.floor((timeLeft % (1000 * 90 * 60)) / (1000 * 60));
+        var minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
         var seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
         countdownElement.textContent = `次の実行まで: ${minutes}分 ${seconds}秒`;
@@ -69,7 +72,7 @@
     countdownElement.style.position = 'fixed';
     countdownElement.style.bottom = '10px';
     countdownElement.style.right = '10px';
-    countdownElement.style.zIndex = 1000;
+    countdownElement.style.zIndex = '1000';
     countdownElement.style.padding = '10px';
     countdownElement.style.backgroundColor = '#333';
     countdownElement.style.color = 'white';
@@ -84,4 +87,3 @@
     // カウントダウンタイマーの更新を毎秒行う
     setInterval(updateCountdown, 1000);
 })();
-
