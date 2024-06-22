@@ -8,8 +8,7 @@
         "モードケイズJR尼崎 トップサロンD板垣",
     ];
 
-
-    // スタッフの公開/非公開を切り替える関数
+     // スタッフの公開/非公開を切り替える関数
     function toggleStaffVisibility() {
         // 全ての選択要素を取得
         var selectElements = document.querySelectorAll('.m_staff_card_action .a_select');
