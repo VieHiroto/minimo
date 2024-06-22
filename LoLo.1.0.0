@@ -10,19 +10,6 @@
         'シールエクステ✨ 透明感カラー/ダイヤ'
     ];
 
-(function() {
-    'use strict';
-
-    // 指定されたスタッフのリスト
-    var targetStaff = [
-        '✂️メンズパーマ✂️ タマガキ　コウジ',
-        '百田 侑奈',
-        'リョウスケ/髪質改善 /ブルーブラック',
-        '✨️美髪✨️髪質改善 / 針田 綾音',
-        'アイリスト🦋中川 未来🦋',
-        "MODE K's MARI",
-        '縮毛矯正特化サロン モードケイズ',
-    ];
 
     // スタッフの公開/非公開を切り替える関数
     function toggleStaffVisibility() {
@@ -59,7 +46,7 @@
 
     // 次の実行時間を設定 (30分後)
     function setNextExecutionTime() {
-        return new Date().getTime() + (30 + Math.random() * 20 * 60 * 1000);
+        return new Date().getTime() + (30 + Math.random() * 20) * 60 * 1000;
     }
 
     var nextExecution = setNextExecutionTime();
