@@ -7,7 +7,6 @@
          'Aimée by  modeks',
     ];
 
-
      // スタッフの公開/非公開を切り替える関数
     function toggleStaffVisibility() {
         // 全ての選択要素を取得
@@ -41,19 +40,21 @@
         }, 5000);
     }
 
-    // 次の実行時間を設定 (ランダムな30〜50分の間隔)
+    // 次の実行時間を設定 (30分後)
     function setNextExecutionTime() {
         return new Date().getTime() + (30 + Math.random() * 20) * 60 * 1000;
     }
 
     var nextExecution = setNextExecutionTime();
+    var executed = false; // 実行フラグ
 
     // カウントダウンタイマーの更新
     function updateCountdown() {
         var now = new Date().getTime();
         var timeLeft = nextExecution - now;
 
-        if (timeLeft <= 0) {
+        if (timeLeft <= 0 && !executed) {
+            executed = true; // 実行フラグをセット
             toggleStaffVisibility();
             // ページがリロードされるため、次の実行時間の再設定は不要
             return;
