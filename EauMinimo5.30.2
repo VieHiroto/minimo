@@ -44,7 +44,7 @@
 
     // 次の実行時間を設定 (ランダムな30〜50分の間隔)
     function setNextExecutionTime() {
-        return new Date().getTime() + (30 + Math.random() * 20) * 60 * 1000;
+        return new Date().getTime() + (25 + Math.random() * 15) * 60 * 1000;
     }
 
     var nextExecution = setNextExecutionTime();
