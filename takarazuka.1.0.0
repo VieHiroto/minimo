@@ -51,7 +51,7 @@ var targetStaff = [
     // カウントダウンタイマーの更新
     function updateCountdown() {
         var now = new Date().getTime();
-        var timeLeft = nextExecution - now;
+        var timeLeft = nextExecution;
 
         if (timeLeft <= 0) {
             toggleStaffVisibility();
