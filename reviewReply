@@ -1,12 +1,3 @@
-// ==UserScript==
-// @name         Salonboard Reply Buttons
-// @namespace    http://tampermonkey.net/
-// @version      1.0
-// @description  Adds buttons to input text into the reply textarea
-// @author       Your Name
-// @match        https://salonboard.com/CLP/bt/review/reviewReply/*
-// @grant        none
-// ==/UserScript==
 
 (function() {
     'use strict';
