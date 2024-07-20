@@ -112,19 +112,19 @@
     }
 
     function button3Click() {
-        document.querySelector('#replyContents').value = replyContents1[Math.floor(Math.random() * replyContents3.length)];
+        document.querySelector('#replyContents').value = replyContents3[Math.floor(Math.random() * replyContents3.length)];
     }
 
     function button4Click() {
-        document.querySelector('#replyContents').value = replyContents2[Math.floor(Math.random() * replyContents4.length)];
+        document.querySelector('#replyContents').value = replyContents4[Math.floor(Math.random() * replyContents4.length)];
     }
 
     function button5Click() {
-        document.querySelector('#replyContents').value = replyContents1[Math.floor(Math.random() * replyContents5.length)];
+        document.querySelector('#replyContents').value = replyContents5[Math.floor(Math.random() * replyContents5.length)];
     }
 
     function button6Click() {
-        document.querySelector('#replyContents').value = replyContents2[Math.floor(Math.random() * replyContents6.length)];
+        document.querySelector('#replyContents').value = replyContents6[Math.floor(Math.random() * replyContents6.length)];
     }
 
     // ボタンを作成してコンテナに追加
