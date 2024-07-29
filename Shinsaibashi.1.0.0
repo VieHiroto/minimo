@@ -33,7 +33,7 @@
             }
         });
 
-        // 5秒待機してから公開に変更
+        // ７秒待機してから公開に変更
         setTimeout(function() {
             selectElements.forEach(function(selectElement) {
                 var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
@@ -44,10 +44,10 @@
                 }
             });
 
-            // 公開処理が終わった後、さらに5秒待機してからページをリロード
+            // 公開処理が終わった後、さらに7秒待機してからページをリロード
             setTimeout(function() {
                 location.reload();
-            }, 5000);
+            }, 7000);
         }, 7000);
     }
 
