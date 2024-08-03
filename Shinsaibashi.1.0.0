@@ -1,23 +1,6 @@
 (function() {
     'use strict';
 
-    // 指定されたスタッフのリスト
-    var targetStaff = [
-        '福田 晃大',
-        '美髪・シールエクステ 🌿ヨシモトカンジ',
-        'なかがわ せいか',
-        '💚CHIHO TAKATA💚',
-        '🤍森山 琳々香🤍',
-        '🌈イトウ アユム🌈',
-        'モードケイズ心斎橋 ユキ',
-        '韓国風・ブリーチなし ・美髪・後藤　一斗',
-        '⸜🌷︎⸝韓国・艶髪 KANNA🌷',
-        '🫧eyelist 🫧saki',
-        '韓国・網紅🕊️ CHINA🕊️',
-        "🫧束間マツエク🫧 SONA"
-    ];
-
-
     // スタッフの公開/非公開を切り替える関数
     function toggleStaffVisibility() {
         // 全ての選択要素を取得
@@ -26,7 +9,8 @@
         // 非公開に変更
         selectElements.forEach(function(selectElement) {
             var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
-            if (cardTitle && targetStaff.includes(cardTitle.textContent.trim())) {
+            var staffName = cardTitle ? cardTitle.textContent.trim() : '';
+            if (staffName && staffName !== '矢鍋 遼') {
                 selectElement.value = '1'; // 1は「非公開」
                 var event = new Event('change', { bubbles: true });
                 selectElement.dispatchEvent(event);
@@ -37,7 +21,8 @@
         setTimeout(function() {
             selectElements.forEach(function(selectElement) {
                 var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
-                if (cardTitle && targetStaff.includes(cardTitle.textContent.trim())) {
+                var staffName = cardTitle ? cardTitle.textContent.trim() : '';
+                if (staffName && staffName !== '矢鍋 遼') {
                     selectElement.value = '0'; // 0は「公開」
                     var event = new Event('change', { bubbles: true });
                     selectElement.dispatchEvent(event);
