@@ -1,0 +1,82 @@
+(function() {
+    'use strict';
+
+    // スタッフの公開/非公開を切り替える関数
+    function toggleStaffVisibility() {
+        // 全ての選択要素を取得
+        var selectElements = document.querySelectorAll('.m_staff_card_action .a_select');
+
+        // 非公開に変更
+        selectElements.forEach(function(selectElement) {
+            var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
+            var staffName = cardTitle ? cardTitle.textContent.trim() : '';
+            if (staffName && staffName !== '🌈BASE. awaji🌈',
+            'BASE awaji'
+            ) {
+                selectElement.value = '1'; // 1は「非公開」
+                var event = new Event('change', { bubbles: true });
+                selectElement.dispatchEvent(event);
+            }
+        });
+
+        // ７秒待機してから公開に変更
+        setTimeout(function() {
+            selectElements.forEach(function(selectElement) {
+                var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
+                var staffName = cardTitle ? cardTitle.textContent.trim() : '';
+                if (staffName && staffName !== '🌈BASE. awaji🌈',
+            'BASE awaji'
+            ) {
+                    selectElement.value = '0'; // 0は「公開」
+                    var event = new Event('change', { bubbles: true });
+                    selectElement.dispatchEvent(event);
+                }
+            });
+
+            // 公開処理が終わった後、さらに7秒待機してからページをリロード
+            setTimeout(function() {
+                location.reload();
+            }, 7000);
+        }, 7000);
+    }
+
+    // 次の実行時間を設定 (ランダムな30〜50分の間隔)
+    var nextExecution = new Date().getTime() + (30 + Math.random() * 20) * 60 * 1000;
+
+    // カウントダウンタイマーの更新
+    function updateCountdown() {
+        var now = new Date().getTime();
+        var timeLeft = nextExecution - now;
+
+        if (timeLeft <= 0) {
+            toggleStaffVisibility();
+            // ページがリロードされるため、次の実行時間の再設定は不要
+            return;
+        }
+
+        var minutes = Math.floor((timeLeft % (1000 * 90 * 60)) / (1000 * 60));
+        var seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+        countdownElement.textContent = `次の実行まで: ${minutes}分 ${seconds}秒`;
+    }
+
+    // カウントダウン表示の作成
+    var countdownElement = document.createElement('div');
+    countdownElement.style.position = 'fixed';
+    countdownElement.style.bottom = '10px';
+    countdownElement.style.right = '10px';
+    countdownElement.style.zIndex = 1000;
+    countdownElement.style.padding = '10px';
+    countdownElement.style.backgroundColor = '#333';
+    countdownElement.style.color = 'white';
+    countdownElement.style.border = 'none';
+    countdownElement.style.borderRadius = '5px';
+
+    document.body.appendChild(countdownElement);
+
+    // 初回カウントダウンの表示
+    updateCountdown();
+
+    // カウントダウンタイマーの更新を毎秒行う
+    setInterval(updateCountdown, 1000);
+})();
