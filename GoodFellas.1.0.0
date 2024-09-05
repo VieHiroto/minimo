@@ -10,7 +10,7 @@
         selectElements.forEach(function(selectElement) {
             var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
             var staffName = cardTitle ? cardTitle.textContent.trim() : '';
-            if (staffName && staffName !== '🫧束間マツエク🫧 SONA') {
+            if (staffName && staffName !== '') {
                 selectElement.value = '1'; // 1は「非公開」
                 var event = new Event('change', { bubbles: true });
                 selectElement.dispatchEvent(event);
@@ -22,7 +22,7 @@
             selectElements.forEach(function(selectElement) {
                 var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
                 var staffName = cardTitle ? cardTitle.textContent.trim() : '';
-                if (staffName && staffName !== '🫧束間マツエク🫧 SONA') {
+                if (staffName && staffName !== '') {
                     selectElement.value = '0'; // 0は「公開」
                     var event = new Event('change', { bubbles: true });
                     selectElement.dispatchEvent(event);
