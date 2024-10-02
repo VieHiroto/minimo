@@ -1,6 +1,9 @@
 (function() {
     'use strict';
 
+    // 名前を変数として定義
+    var excludedStaffName = '🌈ツヤカラー 🌈渕田美沙央';
+
     // スタッフの公開/非公開を切り替える関数
     function toggleStaffVisibility() {
         // 全ての選択要素を取得
@@ -10,48 +13,34 @@
         selectElements.forEach(function(selectElement) {
             var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
             var staffName = cardTitle ? cardTitle.textContent.trim() : '';
-            if (staffName && staffName !== '🌈ツヤカラー 🌈渕田美沙央') {
+            if (staffName && staffName !== excludedStaffName) {
                 selectElement.value = '1'; // 1は「非公開」
                 var event = new Event('change', { bubbles: true });
                 selectElement.dispatchEvent(event);
             }
         });
 
-        // ７秒待機してから公開に変更
-        setTimeout(function() {
-            selectElements.forEach(function(selectElement) {
-                var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
-                var staffName = cardTitle ? cardTitle.textContent.trim() : '';
-                if (staffName && staffName !== '🌈ツヤカラー 🌈渕田美沙央') {
-                    selectElement.value = '0'; // 0は「公開」
-                    var event = new Event('change', { bubbles: true });
-                    selectElement.dispatchEvent(event);
-                }
-            });
+        // 7秒待機してから公開に変更
+        setTimeout(changeToPublic, 7000);
+         setTimeout(function() {
+            location.reload();
+        }, 17000);
+    }
 
-            // 公開処理が終わった後、さらに7秒待機してからページをリロード
-            setTimeout(function() {
-                location.reload();
-            }, 5000);
-        }, 5000);
+    // 非公開から公開に変更する関数
+    function changeToPublic() {
+        var selectElements = document.querySelectorAll('.m_staff_card_action .a_select');
 
-        // さらに7秒待機してから非公開に変更
-        setTimeout(function() {
-            selectElements.forEach(function(selectElement) {
-                var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
-                var staffName = cardTitle ? cardTitle.textContent.trim() : '';
-                if (staffName && staffName !== '🌈ツヤカラー 🌈渕田美沙央') {
-                    selectElement.value = '1'; // 1は「非公開」
-                    var event = new Event('change', { bubbles: true });
-                    selectElement.dispatchEvent(event);
-                }
-            });
+        selectElements.forEach(function(selectElement) {
+            var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
+            var staffName = cardTitle ? cardTitle.textContent.trim() : '';
+            if (staffName && staffName !== excludedStaffName) {
+                selectElement.value = '0'; // 0は「公開」
+                var event = new Event('change', { bubbles: true });
+                selectElement.dispatchEvent(event);
+            }
+        });
 
-            // 非公開処理が終わった後、さらに7秒待機してからページをリロード
-            setTimeout(function() {
-                location.reload();
-            }, 5000);
-        }, 10000);
     }
 
     // 次の実行時間を設定 (ランダムな30〜50分の間隔)
@@ -93,4 +82,26 @@
 
     // カウントダウンタイマーの更新を毎秒行う
     setInterval(updateCountdown, 1000);
+
+    // 10分ごとにchangeToPublicを実行
+    setInterval(changeToPublic, 600000); // 600,000ミリ秒 = 10分
+
+    // ボタンを作成してページに追加
+    var button = document.createElement('button');
+    button.innerText = '非公開になる場合こちらをクリック'; // ボタンに表示するテキスト
+    button.style.position = 'fixed';
+    button.style.bottom = '60px';
+    button.style.right = '20px';
+    button.style.padding = '10px 20px';
+    button.style.backgroundColor = '#4CAF50'; // 背景色
+    button.style.color = 'white'; // 文字色
+    button.style.border = 'none'; // ボーダーを消す
+    button.style.borderRadius = '5px'; // ボタンの角を丸くする
+    button.style.cursor = 'pointer'; // カーソルをポインタにする
+
+    // ボタンがクリックされたときにchangeToPublicを実行
+    button.addEventListener('click', changeToPublic);
+
+    // ページのbodyにボタンを追加
+    document.body.appendChild(button);
 })();
