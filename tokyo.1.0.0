@@ -32,8 +32,26 @@
             // 公開処理が終わった後、さらに7秒待機してからページをリロード
             setTimeout(function() {
                 location.reload();
-            }, 7000);
-        }, 7000);
+            }, 5000);
+        }, 5000);
+
+        // さらに7秒待機してから非公開に変更
+        setTimeout(function() {
+            selectElements.forEach(function(selectElement) {
+                var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
+                var staffName = cardTitle ? cardTitle.textContent.trim() : '';
+                if (staffName && staffName !== '🌈ツヤカラー 🌈渕田美沙央') {
+                    selectElement.value = '1'; // 1は「非公開」
+                    var event = new Event('change', { bubbles: true });
+                    selectElement.dispatchEvent(event);
+                }
+            });
+
+            // 非公開処理が終わった後、さらに7秒待機してからページをリロード
+            setTimeout(function() {
+                location.reload();
+            }, 5000);
+        }, 10000);
     }
 
     // 次の実行時間を設定 (ランダムな30〜50分の間隔)
