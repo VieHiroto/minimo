@@ -75,4 +75,36 @@
 
     // カウントダウンタイマーの更新を毎秒行う
     setInterval(updateCountdown, 1000);
+
+    // ボタンを作成してページに追加
+    var button = document.createElement('button');
+    button.innerText = '非公開になる場合こちらをクリック'; // ボタンに表示するテキスト
+    button.style.position = 'fixed';
+    button.style.bottom = '30px';
+    button.style.right = '20px';
+    button.style.padding = '10px 20px';
+    button.style.backgroundColor = '#4CAF50'; // 背景色
+    button.style.color = 'white'; // 文字色
+    button.style.border = 'none'; // ボーダーを消す
+    button.style.borderRadius = '5px'; // ボタンの角を丸くする
+    button.style.cursor = 'pointer'; // カーソルをポインタにする
+
+    // ボタンがクリックされたときにsetTimeoutで処理を1秒後に実行
+    button.addEventListener('click', function() {
+        setTimeout(function() {
+            var selectElements = document.querySelectorAll('.m_staff_card_action select'); // セレクト要素を取得
+            selectElements.forEach(function(selectElement) {
+                var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
+                var staffName = cardTitle ? cardTitle.textContent.trim() : '';
+                if (staffName && staffName !== '安達 直人') {
+                    selectElement.value = '0'; // 0は「公開」
+                    var event = new Event('change', { bubbles: true });
+                    selectElement.dispatchEvent(event);
+                }
+            });
+        }, 1000); // 1秒後に実行
+    });
+
+    // ページのbodyにボタンを追加
+    document.body.appendChild(button);
 })();
