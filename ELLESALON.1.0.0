@@ -1,17 +1,10 @@
 (function() {
     'use strict';
 
-    // 指定されたスタッフのリスト
-    var targetStaff = [
-        "うなじ / 顔 / 眉毛 🥀rina",
-        "和田 ひかり",
-        "ELLE salon /ayaka",
-        "骨格似合わせデザイン 👀mana",
-        "似合わせ/レイヤー 💟SAE",
-        "ELLE salon サエ"
-    ];
+    // 名前を変数として定義
+    var excludedStaffNames = ['ELLE和田 ひかり','ELLE salon 西梅田 小顔カット'];
 
-     // スタッフの公開/非公開を切り替える関数
+    // スタッフの公開/非公開を切り替える関数
     function toggleStaffVisibility() {
         // 全ての選択要素を取得
         var selectElements = document.querySelectorAll('.m_staff_card_action .a_select');
@@ -19,52 +12,51 @@
         // 非公開に変更
         selectElements.forEach(function(selectElement) {
             var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
-            if (cardTitle && targetStaff.includes(cardTitle.textContent.trim())) {
+            var staffName = cardTitle ? cardTitle.textContent.trim() : '';
+            if (staffName && !excludedStaffNames.includes(staffName)) { // 配列に含まれていない場合
                 selectElement.value = '1'; // 1は「非公開」
                 var event = new Event('change', { bubbles: true });
                 selectElement.dispatchEvent(event);
             }
         });
 
-        // 5秒待機してから公開に変更
+        // 7秒待機してから公開に変更
+        setTimeout(changeToPublic, 7000);
         setTimeout(function() {
-            selectElements.forEach(function(selectElement) {
-                var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
-                if (cardTitle && targetStaff.includes(cardTitle.textContent.trim())) {
-                    selectElement.value = '0'; // 0は「公開」
-                    var event = new Event('change', { bubbles: true });
-                    selectElement.dispatchEvent(event);
-                }
-            });
-
-            // 公開処理が終わった後、さらに5秒待機してからページをリロード
-            setTimeout(function() {
-                location.reload();
-            }, 5000);
-        }, 5000);
+            location.reload();
+        }, 17000); // 17秒後にリロード
     }
 
-    // 次の実行時間を設定 (30分後)
-    function setNextExecutionTime() {
-        return new Date().getTime() + (30 + Math.random() * 20) * 60 * 1000;
+    // 非公開から公開に変更する関数
+    function changeToPublic() {
+        var selectElements = document.querySelectorAll('.m_staff_card_action .a_select');
+
+        selectElements.forEach(function(selectElement) {
+            var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
+            var staffName = cardTitle ? cardTitle.textContent.trim() : '';
+            if (staffName && !excludedStaffNames.includes(staffName)) { // 配列に含まれていない場合
+                selectElement.value = '0'; // 0は「公開」
+                var event = new Event('change', { bubbles: true });
+                selectElement.dispatchEvent(event);
+            }
+        });
     }
 
-    var nextExecution = setNextExecutionTime();
-    var executed = false; // 実行フラグ
+    // 次の実行時間を設定 (ランダムな30〜50分の間隔)
+    var nextExecution = new Date().getTime() + (30 + Math.random() * 20) * 60 * 1000;
 
     // カウントダウンタイマーの更新
     function updateCountdown() {
         var now = new Date().getTime();
         var timeLeft = nextExecution - now;
 
-        if (timeLeft <= 0 && !executed) {
-            executed = true; // 実行フラグをセット
+        if (timeLeft <= 0) {
             toggleStaffVisibility();
             // ページがリロードされるため、次の実行時間の再設定は不要
             return;
         }
 
-        var minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        var minutes = Math.floor((timeLeft % (1000 * 90 * 60)) / (1000 * 60));
         var seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
         countdownElement.textContent = `次の実行まで: ${minutes}分 ${seconds}秒`;
@@ -75,7 +67,7 @@
     countdownElement.style.position = 'fixed';
     countdownElement.style.bottom = '10px';
     countdownElement.style.right = '10px';
-    countdownElement.style.zIndex = '1000';
+    countdownElement.style.zIndex = 1000;
     countdownElement.style.padding = '10px';
     countdownElement.style.backgroundColor = '#333';
     countdownElement.style.color = 'white';
@@ -89,4 +81,26 @@
 
     // カウントダウンタイマーの更新を毎秒行う
     setInterval(updateCountdown, 1000);
+
+    // 10分ごとにchangeToPublicを実行
+    setInterval(changeToPublic, 600000); // 600,000ミリ秒 = 10分
+
+    // ボタンを作成してページに追加
+    var button = document.createElement('button');
+    button.innerText = '非公開になる場合こちらをクリック'; // ボタンに表示するテキスト
+    button.style.position = 'fixed';
+    button.style.bottom = '60px';
+    button.style.right = '20px';
+    button.style.padding = '10px 20px';
+    button.style.backgroundColor = '#4CAF50'; // 背景色
+    button.style.color = 'white'; // 文字色
+    button.style.border = 'none'; // ボーダーを消す
+    button.style.borderRadius = '5px'; // ボタンの角を丸くする
+    button.style.cursor = 'pointer'; // カーソルをポインタにする
+
+    // ボタンがクリックされたときにchangeToPublicを実行
+    button.addEventListener('click', changeToPublic);
+
+    // ページのbodyにボタンを追加
+    document.body.appendChild(button);
 })();
