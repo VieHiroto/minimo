@@ -80,7 +80,7 @@
     var button = document.createElement('button');
     button.innerText = '非公開になる場合こちらをクリック'; // ボタンに表示するテキスト
     button.style.position = 'fixed';
-    button.style.bottom = '30px';
+    button.style.bottom = '60px';
     button.style.right = '20px';
     button.style.padding = '10px 20px';
     button.style.backgroundColor = '#4CAF50'; // 背景色
