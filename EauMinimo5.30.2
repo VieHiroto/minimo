@@ -1,8 +1,8 @@
 (function() {
     'use strict';
 
-    // 安達 直人の名前を変数として定義
-    var excludedStaffName = '安達 直人';
+    // 名前を変数として定義
+    var excludedStaffNames = ['黒野 友輔',"MODE K´s eau店長 中井大樹","松本 大輔",". Chisa"];
 
     // スタッフの公開/非公開を切り替える関数
     function toggleStaffVisibility() {
@@ -13,7 +13,7 @@
         selectElements.forEach(function(selectElement) {
             var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
             var staffName = cardTitle ? cardTitle.textContent.trim() : '';
-            if (staffName && staffName !== excludedStaffName) {
+            if (staffName && !excludedStaffNames.includes(staffName)) { // 配列に含まれていない場合
                 selectElement.value = '1'; // 1は「非公開」
                 var event = new Event('change', { bubbles: true });
                 selectElement.dispatchEvent(event);
@@ -22,9 +22,9 @@
 
         // 7秒待機してから公開に変更
         setTimeout(changeToPublic, 7000);
-         setTimeout(function() {
+        setTimeout(function() {
             location.reload();
-        }, 17000);
+        }, 17000); // 17秒後にリロード
     }
 
     // 非公開から公開に変更する関数
@@ -34,13 +34,12 @@
         selectElements.forEach(function(selectElement) {
             var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
             var staffName = cardTitle ? cardTitle.textContent.trim() : '';
-            if (staffName && staffName !== excludedStaffName) {
+            if (staffName && !excludedStaffNames.includes(staffName)) { // 配列に含まれていない場合
                 selectElement.value = '0'; // 0は「公開」
                 var event = new Event('change', { bubbles: true });
                 selectElement.dispatchEvent(event);
             }
         });
-
     }
 
     // 次の実行時間を設定 (ランダムな30〜50分の間隔)
