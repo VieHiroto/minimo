@@ -87,8 +87,7 @@
     // カウントダウンタイマーの更新を毎秒行う
     setInterval(updateCountdown, 1000);
 
-    // 10分ごとにchangeToPublicを実行
-    setInterval(changeToPublic, 1800000); // 600,000ミリ秒 = 10分
+    setTimeout(changeToPublic, 60000); // ページをリロードしてから1分後
 
     // ボタンを作成してページに追加
     var button = document.createElement('button');
