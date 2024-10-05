@@ -7,7 +7,7 @@
     // スクリプトが1度だけ実行されるようにフラグを設定
     var hasRun = false;
 
-    // スタッフの公開/非公開を切り替える関数
+    // スタッフの非公開に変更する関数
     function toggleStaffVisibility() {
         if (hasRun) return; // 既に実行されている場合は何もしない
         hasRun = true; // 実行フラグを立てる
@@ -26,15 +26,34 @@
             }
         });
 
-        // 7秒待機してから公開に変更
-        setTimeout(changeToPublic, 7000);
-        setTimeout(function() {
-            location.reload();
-        }, 17000); // 17秒後にリロード
+        // 7秒待機してから公開に変更（非公開後に行われる専用の処理）
+        setTimeout(changeToPublicFromPrivate, 7000);
     }
 
-    // 非公開から公開に変更する関数
-    function changeToPublic() {
+    // 非公開から公開に変更する関数（非公開処理後に実行される）
+    function changeToPublicFromPrivate() {
+        var selectElements = document.querySelectorAll('.m_staff_card_action .a_select');
+
+        selectElements.forEach(function(selectElement, index) {
+            var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
+            var staffName = cardTitle ? cardTitle.textContent.trim() : '';
+            if (staffName && !excludedStaffNames.includes(staffName)) { // 配列に含まれていない場合
+                selectElement.value = '0'; // 0は「公開」
+                var event = new Event('change', { bubbles: true });
+                selectElement.dispatchEvent(event);
+            }
+
+            // 全ての要素が公開に変更された後にリロードを行う
+            if (index === selectElements.length - 1) { // 最後の要素に到達したとき
+                setTimeout(function() {
+                    location.reload();
+                }, 3000); // 公開処理が完了して3秒後にリロード
+            }
+        });
+    }
+
+    // 手動またはタイマーで公開に変更する関数
+    function changeToPublicManual() {
         var selectElements = document.querySelectorAll('.m_staff_card_action .a_select');
 
         selectElements.forEach(function(selectElement) {
@@ -87,7 +106,8 @@
     // カウントダウンタイマーの更新を毎秒行う
     setInterval(updateCountdown, 1000);
 
-    setTimeout(changeToPublic, 60000); // ページをリロードしてから1分後
+    // ページをリロードしてから1分後に手動で公開に変更
+    setTimeout(changeToPublicManual, 60000); // ページをリロードしてから1分後
 
     // ボタンを作成してページに追加
     var button = document.createElement('button');
@@ -102,8 +122,8 @@
     button.style.borderRadius = '5px'; // ボタンの角を丸くする
     button.style.cursor = 'pointer'; // カーソルをポインタにする
 
-    // ボタンがクリックされたときにchangeToPublicを実行
-    button.addEventListener('click', changeToPublic);
+    // ボタンがクリックされたときに手動で公開に変更
+    button.addEventListener('click', changeToPublicManual);
 
     // ページのbodyにボタンを追加
     document.body.appendChild(button);
