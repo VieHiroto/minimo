@@ -2,10 +2,16 @@
     'use strict';
 
     // 名前を変数として定義
-    var excludedStaffName = '🌈ツヤカラー 🌈渕田美沙央';
+    var excludedStaffNames = ['🌈ツヤカラー 🌈渕田美沙央'];
+
+    // スクリプトが1度だけ実行されるようにフラグを設定
+    var hasRun = false;
 
     // スタッフの公開/非公開を切り替える関数
     function toggleStaffVisibility() {
+        if (hasRun) return; // 既に実行されている場合は何もしない
+        hasRun = true; // 実行フラグを立てる
+
         // 全ての選択要素を取得
         var selectElements = document.querySelectorAll('.m_staff_card_action .a_select');
 
@@ -13,7 +19,7 @@
         selectElements.forEach(function(selectElement) {
             var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
             var staffName = cardTitle ? cardTitle.textContent.trim() : '';
-            if (staffName && staffName !== excludedStaffName) {
+            if (staffName && !excludedStaffNames.includes(staffName)) { // 配列に含まれていない場合
                 selectElement.value = '1'; // 1は「非公開」
                 var event = new Event('change', { bubbles: true });
                 selectElement.dispatchEvent(event);
@@ -22,9 +28,9 @@
 
         // 7秒待機してから公開に変更
         setTimeout(changeToPublic, 7000);
-         setTimeout(function() {
+        setTimeout(function() {
             location.reload();
-        }, 17000);
+        }, 17000); // 17秒後にリロード
     }
 
     // 非公開から公開に変更する関数
@@ -34,13 +40,12 @@
         selectElements.forEach(function(selectElement) {
             var cardTitle = selectElement.closest('.m_staff_card_action').previousElementSibling.querySelector('.m_staff_card_title');
             var staffName = cardTitle ? cardTitle.textContent.trim() : '';
-            if (staffName && staffName !== excludedStaffName) {
+            if (staffName && !excludedStaffNames.includes(staffName)) { // 配列に含まれていない場合
                 selectElement.value = '0'; // 0は「公開」
                 var event = new Event('change', { bubbles: true });
                 selectElement.dispatchEvent(event);
             }
         });
-
     }
 
     // 次の実行時間を設定 (ランダムな30〜50分の間隔)
@@ -53,8 +58,7 @@
 
         if (timeLeft <= 0) {
             toggleStaffVisibility();
-            // ページがリロードされるため、次の実行時間の再設定は不要
-            return;
+            return; // 実行後に即座にカウントダウン更新を終了する
         }
 
         var minutes = Math.floor((timeLeft % (1000 * 90 * 60)) / (1000 * 60));
