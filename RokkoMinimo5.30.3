@@ -3,7 +3,7 @@
 
     // 名前を変数として定義
     var excludedStaffNames = ["MODEK,s六甲道","山田 直樹","柴山 英明","佐野 遥菜","松本 麗衣"];
-
+    
     // スクリプトが1度だけ実行されるようにフラグを設定
     var hasRun = false;
 
@@ -49,7 +49,7 @@
     }
 
     // 次の実行時間を設定 (ランダムな30〜50分の間隔)
-    var nextExecution = new Date().getTime() + (6 + Math.random() * 0) * 60 * 1000;
+    var nextExecution = new Date().getTime() + (5 + Math.random() * 0) * 60 * 1000;
 
     // カウントダウンタイマーの更新
     function updateCountdown() {
@@ -87,8 +87,8 @@
     // カウントダウンタイマーの更新を毎秒行う
     setInterval(updateCountdown, 1000);
 
-    // 10分ごとにchangeToPublicを実行
-    setInterval(changeToPublic, 600000); // 600,000ミリ秒 = 10分
+    // カウントダウンタイマーが動き出してから3分後にchangeToPublicを実行
+    setTimeout(changeToPublic, nextExecution + 180000 - new Date().getTime()); // カウントダウンタイマーが動き出してから3分後
 
     // ボタンを作成してページに追加
     var button = document.createElement('button');
