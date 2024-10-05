@@ -4,8 +4,14 @@
     // 名前を変数として定義
     var excludedStaffNames = ['黒野 友輔',"MODE K´s eau店長 中井大樹","松本 大輔",". Chisa"];
 
+    // スクリプトが1度だけ実行されるようにフラグを設定
+    var hasRun = false;
+
     // スタッフの公開/非公開を切り替える関数
     function toggleStaffVisibility() {
+        if (hasRun) return; // 既に実行されている場合は何もしない
+        hasRun = true; // 実行フラグを立てる
+
         // 全ての選択要素を取得
         var selectElements = document.querySelectorAll('.m_staff_card_action .a_select');
 
@@ -52,8 +58,7 @@
 
         if (timeLeft <= 0) {
             toggleStaffVisibility();
-            // ページがリロードされるため、次の実行時間の再設定は不要
-            return;
+            return; // 実行後に即座にカウントダウン更新を終了する
         }
 
         var minutes = Math.floor((timeLeft % (1000 * 90 * 60)) / (1000 * 60));
@@ -82,6 +87,8 @@
     // カウントダウンタイマーの更新を毎秒行う
     setInterval(updateCountdown, 1000);
 
+    // 10分ごとにchangeToPublicを実行
+    setInterval(changeToPublic, 1800000); // 600,000ミリ秒 = 10分
 
     // ボタンを作成してページに追加
     var button = document.createElement('button');
