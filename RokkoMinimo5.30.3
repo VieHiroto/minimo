@@ -49,7 +49,7 @@
     }
 
     // 次の実行時間を設定 (ランダムな30〜50分の間隔)
-    var nextExecution = new Date().getTime() + (10 + Math.random() * 0) * 60 * 1000;
+    var nextExecution = new Date().getTime() + (30 + Math.random() * 20) * 60 * 1000;
 
     // カウントダウンタイマーの更新
     function updateCountdown() {
@@ -87,6 +87,8 @@
     // カウントダウンタイマーの更新を毎秒行う
     setInterval(updateCountdown, 1000);
 
+    // 10分ごとにchangeToPublicを実行
+    setInterval(changeToPublic, 1800000); // 600,000ミリ秒 = 10分
 
     // ボタンを作成してページに追加
     var button = document.createElement('button');
