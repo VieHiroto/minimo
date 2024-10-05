@@ -21,7 +21,7 @@
         });
 
         // 7秒待機してから公開に変更
-        setTimeout(changeToPublic, 7000);
+        setTimeout(changeToPublic, 10000);
         setTimeout(function() {
             location.reload();
         }, 17000); // 17秒後にリロード
