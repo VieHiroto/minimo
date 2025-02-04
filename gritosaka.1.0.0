@@ -2,7 +2,7 @@
     'use strict';
 
     // 名前を変数として定義
-    var excludedStaffNames = ['メンズ専門サロン店長 GRIT 深山一平'];
+    var excludedStaffNames = [''];
 
     // スクリプトが1度だけ実行されるようにフラグを設定
     var hasRun = false;
