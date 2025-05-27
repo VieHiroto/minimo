@@ -1,0 +1,146 @@
+(function() {
+    'use strict';
+
+    // **実行ボタンをページの右端に追加**
+    function addExecuteButton() {
+        const existingButton = document.querySelector("#generateReplyButton");
+        if (existingButton) return;
+
+        const button = document.createElement("button");
+        button.id = "generateReplyButton";
+        button.textContent = "口コミ返信を生成";
+        button.style.position = "fixed";
+        button.style.right = "20px";
+        button.style.bottom = "20px";
+        button.style.padding = "12px 20px";
+        button.style.backgroundColor = "#007bff";
+        button.style.color = "white";
+        button.style.border = "none";
+        button.style.borderRadius = "5px";
+        button.style.boxShadow = "0px 4px 6px rgba(0, 0, 0, 0.1)";
+        button.style.cursor = "pointer";
+        button.style.fontSize = "14px";
+        button.style.zIndex = "1000";
+
+        // ステータス表示用
+        const statusLabel = document.createElement("div");
+        statusLabel.id = "replyStatus";
+        statusLabel.style.position = "fixed";
+        statusLabel.style.right = "20px";
+        statusLabel.style.bottom = "70px";
+        statusLabel.style.backgroundColor = "#f8f9fa";
+        statusLabel.style.padding = "5px 10px";
+        statusLabel.style.borderRadius = "5px";
+        statusLabel.style.fontSize = "12px";
+        statusLabel.style.color = "#333";
+        statusLabel.style.boxShadow = "0px 2px 4px rgba(0, 0, 0, 0.1)";
+        statusLabel.style.display = "none"; // 初期状態では非表示
+        statusLabel.textContent = "";
+
+        document.body.appendChild(button);
+        document.body.appendChild(statusLabel);
+
+        // ボタンクリック時に処理実行
+        button.addEventListener("click", generateReplyUsingAPI);
+    }
+
+    // **処理の進行状況を表示**
+    function updateStatus(message, color = "#333") {
+        const statusLabel = document.querySelector("#replyStatus");
+        if (statusLabel) {
+            statusLabel.textContent = message;
+            statusLabel.style.color = color;
+            statusLabel.style.display = "block"; // 表示する
+        }
+    }
+
+    // **スタイリスト名を取得**
+    function getStylistName() {
+        const stylistTh = [...document.querySelectorAll("th")].find(el => el.textContent.trim() === "スタイリスト");
+        if (stylistTh) {
+            const stylistName = stylistTh.nextElementSibling ? stylistTh.nextElementSibling.textContent.trim() : "（不明）";
+            return stylistName;
+        }
+        return "（不明）";
+    }
+
+    // **ニックネームの取得**
+    const nicknameElement = [...document.querySelectorAll("th")].find(el => el.textContent.trim() === "ニックネーム");
+    const nickname = nicknameElement ? nicknameElement.nextElementSibling.textContent.trim() : "なし";
+
+    // **口コミ内容の取得**
+    const reviewElement = [...document.querySelectorAll("th")].find(el => el.textContent.trim() === "口コミ内容");
+    const reviewContent = reviewElement ? reviewElement.nextElementSibling.textContent.trim().replace(/\n/g, ' ') : "なし";
+
+    // **口コミ評点の取得**
+    const reviewScores = {};
+    const scoreRows = document.querySelectorAll("th:has(+ td)");
+    scoreRows.forEach(th => {
+        const key = th.textContent.trim();
+        const value = th.nextElementSibling ? th.nextElementSibling.textContent.trim() : "なし";
+        if (["雰囲気", "技術・仕上がり", "接客サービス", "メニュー・料金", "総合満足度"].includes(key)) {
+            reviewScores[key] = value;
+        }
+    });
+
+    // **取得データを1行にまとめる**
+    const reviewData = `ニックネーム: ${nickname}, 口コミ内容: ${reviewContent}, 雰囲気: ${reviewScores["雰囲気"]}, 技術・仕上がり: ${reviewScores["技術・仕上がり"]}, 接客サービス: ${reviewScores["接客サービス"]}, メニュー・料金: ${reviewScores["メニュー・料金"]}, 総合満足度: ${reviewScores["総合満足度"]}`;
+
+    // **Google API を使って口コミ返信を生成**
+  function generateReplyUsingAPI() {
+    const apiKey = "AIzaSyDCofB7HU-vllo7b5kx6RRwo0lp5jAMdfo"; // ← 差し替えてください
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+    const requestBody = {
+        contents: [{
+            parts: [{
+                text: `あなたは美容サロンのスタッフです。お客様からの口コミに対して、敬語で誠意を持って返信を行ってください。\n\n以下の情報を元に、200文字程度で口コミ返信文を作成してください。\n\n【入力情報】${reviewData}\n\n【返信ルール】\n1. **お礼を述べる**\n2. **口コミの内容に共感する**\n3. **褒められた点を強調する**\n4. **改善点について前向きに対応を伝える**\n5. **次回の来店を促す**\n6. **締めの挨拶を記載**\n\n出力は口コミ内容のみにしてください。`
+            }]
+        }]
+    };
+
+    updateStatus("生成中...", "blue");
+
+    GM_xmlhttpRequest({
+        method: "POST",
+        url: endpoint,
+        headers: { "Content-Type": "application/json" },
+        data: JSON.stringify(requestBody),
+        onload: function(response) {
+            console.log("APIレスポンス全文:", response.responseText);
+
+            try {
+                if (!response.responseText) {
+                    throw new Error("APIのレスポンスが空です");
+                }
+
+                const data = JSON.parse(response.responseText);
+                if (!data.candidates || data.candidates.length === 0) {
+                    throw new Error("APIのレスポンスに候補が含まれていません");
+                }
+
+                const reply = data.candidates[0].content.parts[0].text;
+
+                const replyTextarea = document.querySelector("#replyContents");
+                if (replyTextarea) {
+                    replyTextarea.value = reply;
+                }
+
+                const replyFromInput = document.querySelector("#replyFrom");
+                if (replyFromInput) {
+                    replyFromInput.value = getStylistName();
+                }
+
+                updateStatus("生成完了！", "green");
+            } catch (error) {
+                console.error("APIのレスポンス処理でエラー:", error);
+                updateStatus("エラーが発生しました", "red");
+            }
+        }
+    });
+}
+
+
+    // **実行ボタンを追加**
+    addExecuteButton();
+})();
