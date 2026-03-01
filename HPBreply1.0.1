@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Google API 口コミ返信生成（Gemini 2.0対応）
 // @namespace    http://tampermonkey.net/
-// @version      2.3
+// @version      2.5
 // @description  最新のGemini APIを使用した口コミ返信生成
 // @author       You
 // @match        *://salonboard.com/CLP/bt/review/reviewReply*
@@ -34,7 +34,7 @@
 
         const statusLabel = document.createElement("div");
         statusLabel.id = "replyStatus";
-        statusLabel.style.cssText = "position:fixed;right:20px;bottom:70px;background:#f8f9fa;padding:8px 12px;border-radius:5px;font-size:13px;color:#333;box-shadow:0 2px 4px rgba(0,0,0,0.1);display:none;max-width:280px;font-weight:500;";
+        statusLabel.style.cssText = "position:fixed;right:20px;bottom:70px;background:#f8f9fa;padding:8px 12px;border-radius:5px;font-size:13px;color:#333;box-shadow:0 2px 4px rgba(0,0,0,0.1);display:none;max-width:350px;font-weight:500;word-break:break-all;";
 
         document.body.appendChild(button);
         document.body.appendChild(statusLabel);
@@ -55,7 +55,7 @@
         }
 
         if (button) {
-            if (message.includes("生成中") || message.includes("待機中")) {
+            if (message.includes("生成中") || message.includes("待機中") || message.includes("再試行")) {
                 button.style.backgroundColor = "#6c757d";
                 button.textContent = "処理中...";
                 button.style.cursor = "not-allowed";
@@ -162,6 +162,7 @@ ${reviewData}
 
         console.log(`API呼び出し（試行 ${retryCount + 1}回目）`);
         console.log("使用モデル:", model);
+        console.log("エンドポイント:", endpoint);
 
         const requestBody = {
             contents: [{
@@ -171,10 +172,16 @@ ${reviewData}
             }],
             generationConfig: {
                 temperature: 0.7,
-                maxOutputTokens: 200,
+                maxOutputTokens: 2048,
                 topK: 40,
                 topP: 0.95
-            }
+            },
+            safetySettings: [
+                { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+            ]
         };
 
         GM_xmlhttpRequest({
@@ -186,7 +193,8 @@ ${reviewData}
             },
             data: JSON.stringify(requestBody),
             onload: function(response) {
-                console.log("APIレスポンス:", response.status, response.statusText);
+                console.log("APIレスポンス status:", response.status, response.statusText);
+                console.log("APIレスポンス body:", response.responseText);
 
                 try {
                     if (!response.responseText) {
@@ -194,47 +202,68 @@ ${reviewData}
                     }
 
                     const data = JSON.parse(response.responseText);
-                    console.log("レスポンス:", data);
 
-                    // レート制限エラーの処理
-                    if (data.error?.message?.includes("Quota exceeded") || data.error?.message?.includes("quota")) {
-                        if (retryCount < 2) {
-                            const waitTime = 15 + retryCount * 15;
-                            console.log(`レート制限。${waitTime}秒待機します...`);
-                            startCountdown(waitTime, () => {
-                                updateStatus("再試行中...", "blue");
-                                callAPI(reviewData, model, retryCount + 1);
-                            });
-                            return;
-                        }
-                        throw new Error("レート制限: 1〜2分後に再度お試しください");
-                    }
-
-                    // モデルが見つからないエラーの場合はフォールバック
-                    if (data.error?.message?.includes("not found") || data.error?.message?.includes("not supported")) {
-                        if (model === PRIMARY_MODEL) {
-                            console.log(`${PRIMARY_MODEL}が使えないため、${FALLBACK_MODEL}で再試行します`);
-                            updateStatus("代替モデルで再試行中...", "blue");
-                            callAPI(reviewData, FALLBACK_MODEL, 0);
-                            return;
-                        }
-                    }
-
-                    // その他のエラー
+                    // エラーレスポンスの処理
                     if (data.error) {
-                        console.error("APIエラー:", data.error);
-                        throw new Error(data.error.message || "APIエラーが発生しました");
+                        console.error("APIエラー詳細:", JSON.stringify(data.error, null, 2));
+
+                        // レート制限
+                        if (data.error.message?.includes("Quota exceeded") || data.error.message?.includes("quota") || data.error.code === 429) {
+                            if (retryCount < 2) {
+                                const waitTime = 15 + retryCount * 15;
+                                console.log(`レート制限。${waitTime}秒待機します...`);
+                                startCountdown(waitTime, () => {
+                                    updateStatus("再試行中...", "blue");
+                                    callAPI(reviewData, model, retryCount + 1);
+                                });
+                                return;
+                            }
+                            throw new Error("レート制限: 1〜2分後に再度お試しください");
+                        }
+
+                        // モデルが見つからない → フォールバック
+                        if (data.error.message?.includes("not found") || data.error.message?.includes("not supported") || data.error.code === 404) {
+                            if (model === PRIMARY_MODEL) {
+                                console.log(`${PRIMARY_MODEL}が使えないため、${FALLBACK_MODEL}で再試行します`);
+                                updateStatus("代替モデルで再試行中...", "blue");
+                                callAPI(reviewData, FALLBACK_MODEL, 0);
+                                return;
+                            }
+                        }
+
+                        throw new Error(data.error.message || `APIエラー (code: ${data.error.code})`);
                     }
 
-                    // 正常なレスポンス処理
-                    if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
-                        console.error("予期しないレスポンス構造:", data);
+                    // 安全フィルターによるブロックチェック
+                    if (data.promptFeedback?.blockReason) {
+                        console.error("プロンプトがブロックされました:", data.promptFeedback);
+                        throw new Error(`安全フィルターでブロック: ${data.promptFeedback.blockReason}`);
+                    }
+
+                    // candidatesの存在チェック
+                    if (!data.candidates || data.candidates.length === 0) {
+                        console.error("candidates が空です。レスポンス全体:", JSON.stringify(data, null, 2));
+                        throw new Error("APIのレスポンスに候補が含まれていません。コンソールで詳細を確認してください。");
+                    }
+
+                    // finishReasonチェック
+                    const candidate = data.candidates[0];
+                    if (candidate.finishReason && candidate.finishReason !== "STOP") {
+                        console.warn("finishReason:", candidate.finishReason);
+                        if (candidate.finishReason === "SAFETY") {
+                            throw new Error("安全フィルターにより生成が中断されました");
+                        }
+                    }
+
+                    // テキスト抽出
+                    const text = candidate.content?.parts?.[0]?.text;
+                    if (!text) {
+                        console.error("テキストが見つかりません。candidate:", JSON.stringify(candidate, null, 2));
                         throw new Error("返信テキストが生成できませんでした");
                     }
 
-                    const reply = data.candidates[0].content.parts[0].text.trim();
+                    const reply = text.trim();
                     console.log("✓ 生成された返信:", reply);
-
                     applyReply(reply);
 
                 } catch (error) {
@@ -245,7 +274,7 @@ ${reviewData}
                     setTimeout(() => {
                         const statusLabel = document.querySelector("#replyStatus");
                         if (statusLabel) statusLabel.style.display = "none";
-                    }, 5000);
+                    }, 8000);
                 }
             },
             onerror: function(error) {
@@ -267,13 +296,13 @@ ${reviewData}
         updateStatus("生成中...", "blue");
 
         const reviewData = getReviewData();
-        console.log("口コミデータ取得完了");
+        console.log("口コミデータ:", reviewData);
 
         callAPI(reviewData, PRIMARY_MODEL, 0);
     }
 
     // スクリプト初期化
-    console.log("✓ 口コミ返信生成スクリプト起動（v2.3 - Gemini API修正版）");
+    console.log("✓ 口コミ返信生成スクリプト起動（v2.5 - maxTokens修正版）");
     addExecuteButton();
     console.log("✓ ボタンを追加しました");
 })();
