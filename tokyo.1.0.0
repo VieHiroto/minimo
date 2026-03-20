@@ -68,7 +68,7 @@
     }
 
     // 次の実行時間を設定 (ランダムな30〜50分の間隔)
-    var nextExecution = new Date().getTime() + (8 + Math.random() * 7) * 60 * 1000;
+    var nextExecution = new Date().getTime() + (15 + Math.random() * 10) * 60 * 1000;
 
     // カウントダウンタイマーの更新
     function updateCountdown() {
