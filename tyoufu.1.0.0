@@ -2,7 +2,7 @@
     'use strict';
 
     // 名前を変数として定義
-    var excludedStaffNames = ["くどう りょうこ"];
+    var excludedStaffNames = ["MODE K's🧸 tanaka","川合 乃咲美"];
 
     // スクリプトが1度だけ実行されるようにフラグを設定
     var hasRun = false;
